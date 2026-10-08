@@ -20,13 +20,17 @@ import com.zzyl.nursing.domain.NursingProject;
 import com.zzyl.nursing.service.INursingProjectService;
 import com.zzyl.common.utils.poi.ExcelUtil;
 import com.zzyl.common.core.page.TableDataInfo;
-
+import com.zzyl.common.core.domain.R;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 /**
  * 护理项目Controller
- * 
+ *
  * @author zll
- * @date 2026-09-19
+ * @date 2026-10-08
  */
+@Api(tags = "护理项目相关接口")
 @RestController
 @RequestMapping("/nursing/project")
 public class NursingProjectController extends BaseController
@@ -37,9 +41,10 @@ public class NursingProjectController extends BaseController
     /**
      * 查询护理项目列表
      */
+    @ApiOperation(value = "查询护理项目列表")
     @PreAuthorize("@ss.hasPermi('nursing:project:list')")
     @GetMapping("/list")
-    public TableDataInfo list(NursingProject nursingProject)
+    public TableDataInfo<List<NursingProject>> list(@ApiParam(value = "护理项目查询条件") NursingProject nursingProject)
     {
         startPage();
         List<NursingProject> list = nursingProjectService.selectNursingProjectList(nursingProject);
@@ -49,10 +54,11 @@ public class NursingProjectController extends BaseController
     /**
      * 导出护理项目列表
      */
+    @ApiOperation(value = "导出护理项目列表")
     @PreAuthorize("@ss.hasPermi('nursing:project:export')")
     @Log(title = "护理项目", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(HttpServletResponse response, NursingProject nursingProject)
+    public void export(@ApiParam(value = "响应对象") HttpServletResponse response,@ApiParam(value = "护理项目查询条件") NursingProject nursingProject)
     {
         List<NursingProject> list = nursingProjectService.selectNursingProjectList(nursingProject);
         ExcelUtil<NursingProject> util = new ExcelUtil<NursingProject>(NursingProject.class);
@@ -62,20 +68,22 @@ public class NursingProjectController extends BaseController
     /**
      * 获取护理项目详细信息
      */
+    @ApiOperation(value = "获取护理项目详细信息")
     @PreAuthorize("@ss.hasPermi('nursing:project:query')")
     @GetMapping(value = "/{id}")
-    public AjaxResult getInfo(@PathVariable("id") Long id)
+    public R<NursingProject> getInfo(@ApiParam(value = "护理项目编号",required = true) @PathVariable("id") Long id)
     {
-        return success(nursingProjectService.selectNursingProjectById(id));
+                return R.ok(nursingProjectService.selectNursingProjectById(id));
     }
 
     /**
      * 新增护理项目
      */
+    @ApiOperation(value = "新增护理项目")
     @PreAuthorize("@ss.hasPermi('nursing:project:add')")
     @Log(title = "护理项目", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody NursingProject nursingProject)
+    public AjaxResult add(@ApiParam(value = "护理项目信息" , required = true) @RequestBody NursingProject nursingProject)
     {
         return toAjax(nursingProjectService.insertNursingProject(nursingProject));
     }
@@ -83,10 +91,11 @@ public class NursingProjectController extends BaseController
     /**
      * 修改护理项目
      */
+    @ApiOperation(value = "修改护理项目")
     @PreAuthorize("@ss.hasPermi('nursing:project:edit')")
     @Log(title = "护理项目", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody NursingProject nursingProject)
+    public AjaxResult edit(@ApiParam(value = "护理项目信息",required = true) @RequestBody NursingProject nursingProject)
     {
         return toAjax(nursingProjectService.updateNursingProject(nursingProject));
     }
@@ -94,10 +103,11 @@ public class NursingProjectController extends BaseController
     /**
      * 删除护理项目
      */
+    @ApiOperation(value = "删除护理项目")
     @PreAuthorize("@ss.hasPermi('nursing:project:remove')")
     @Log(title = "护理项目", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
-    public AjaxResult remove(@PathVariable Long[] ids)
+    public AjaxResult remove(@ApiParam(value = "护理项目编号数组",required = true) @PathVariable Long[] ids)
     {
         return toAjax(nursingProjectService.deleteNursingProjectByIds(ids));
     }

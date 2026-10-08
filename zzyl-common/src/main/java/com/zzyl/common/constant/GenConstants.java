@@ -106,6 +106,15 @@ public class GenConstants
     /** 时间类型 */
     public static final String TYPE_DATE = "Date";
 
+    /** LocalDateTime时间类型 */
+    public static final String TYPE_LOCAL_DATE_TIME= "LocalDateTime";
+
+    /** MySql tinyint 类型 */
+    public static final String MYSQL_TINYINT = "tinyint";
+
+    /** MySql int 类型 */
+    public static final String MYSQL_INT = "int";
+
     /** 模糊查询 */
     public static final String QUERY_LIKE = "LIKE";
 

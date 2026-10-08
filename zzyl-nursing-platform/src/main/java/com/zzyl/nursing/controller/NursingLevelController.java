@@ -20,13 +20,17 @@ import com.zzyl.nursing.domain.NursingLevel;
 import com.zzyl.nursing.service.INursingLevelService;
 import com.zzyl.common.utils.poi.ExcelUtil;
 import com.zzyl.common.core.page.TableDataInfo;
-
+import com.zzyl.common.core.domain.R;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 /**
  * 护理等级Controller
- * 
+ *
  * @author zll
- * @date 2026-09-19
+ * @date 2026-10-08
  */
+@Api(tags = "护理等级相关接口")
 @RestController
 @RequestMapping("/nursing/level")
 public class NursingLevelController extends BaseController
@@ -37,9 +41,10 @@ public class NursingLevelController extends BaseController
     /**
      * 查询护理等级列表
      */
+    @ApiOperation(value = "查询护理等级列表")
     @PreAuthorize("@ss.hasPermi('nursing:level:list')")
     @GetMapping("/list")
-    public TableDataInfo list(NursingLevel nursingLevel)
+    public TableDataInfo<List<NursingLevel>> list(@ApiParam(value = "护理等级查询条件") NursingLevel nursingLevel)
     {
         startPage();
         List<NursingLevel> list = nursingLevelService.selectNursingLevelList(nursingLevel);
@@ -49,10 +54,11 @@ public class NursingLevelController extends BaseController
     /**
      * 导出护理等级列表
      */
+    @ApiOperation(value = "导出护理等级列表")
     @PreAuthorize("@ss.hasPermi('nursing:level:export')")
     @Log(title = "护理等级", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(HttpServletResponse response, NursingLevel nursingLevel)
+    public void export(@ApiParam(value = "响应对象") HttpServletResponse response,@ApiParam(value = "护理等级查询条件") NursingLevel nursingLevel)
     {
         List<NursingLevel> list = nursingLevelService.selectNursingLevelList(nursingLevel);
         ExcelUtil<NursingLevel> util = new ExcelUtil<NursingLevel>(NursingLevel.class);
@@ -62,20 +68,22 @@ public class NursingLevelController extends BaseController
     /**
      * 获取护理等级详细信息
      */
+    @ApiOperation(value = "获取护理等级详细信息")
     @PreAuthorize("@ss.hasPermi('nursing:level:query')")
     @GetMapping(value = "/{id}")
-    public AjaxResult getInfo(@PathVariable("id") Long id)
+    public R<NursingLevel> getInfo(@ApiParam(value = "护理等级编号",required = true) @PathVariable("id") Long id)
     {
-        return success(nursingLevelService.selectNursingLevelById(id));
+                return R.ok(nursingLevelService.selectNursingLevelById(id));
     }
 
     /**
      * 新增护理等级
      */
+    @ApiOperation(value = "新增护理等级")
     @PreAuthorize("@ss.hasPermi('nursing:level:add')")
     @Log(title = "护理等级", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody NursingLevel nursingLevel)
+    public AjaxResult add(@ApiParam(value = "护理等级信息" , required = true) @RequestBody NursingLevel nursingLevel)
     {
         return toAjax(nursingLevelService.insertNursingLevel(nursingLevel));
     }
@@ -83,10 +91,11 @@ public class NursingLevelController extends BaseController
     /**
      * 修改护理等级
      */
+    @ApiOperation(value = "修改护理等级")
     @PreAuthorize("@ss.hasPermi('nursing:level:edit')")
     @Log(title = "护理等级", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody NursingLevel nursingLevel)
+    public AjaxResult edit(@ApiParam(value = "护理等级信息",required = true) @RequestBody NursingLevel nursingLevel)
     {
         return toAjax(nursingLevelService.updateNursingLevel(nursingLevel));
     }
@@ -94,10 +103,11 @@ public class NursingLevelController extends BaseController
     /**
      * 删除护理等级
      */
+    @ApiOperation(value = "删除护理等级")
     @PreAuthorize("@ss.hasPermi('nursing:level:remove')")
     @Log(title = "护理等级", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
-    public AjaxResult remove(@PathVariable Long[] ids)
+    public AjaxResult remove(@ApiParam(value = "护理等级编号数组",required = true) @PathVariable Long[] ids)
     {
         return toAjax(nursingLevelService.deleteNursingLevelByIds(ids));
     }
